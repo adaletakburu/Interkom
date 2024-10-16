@@ -1,3 +1,4 @@
+using Interkom.Infrastructure.Persistence.Extensions;
 
 namespace Interkom.Presentation.WebAPI
 {
@@ -13,6 +14,8 @@ namespace Interkom.Presentation.WebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddPersistenceRegistration();
 
             var app = builder.Build();
 

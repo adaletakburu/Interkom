@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\..\Infrastructure\Interkom.Infrastructure.Persistence\Interkom.Infrastructure.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
