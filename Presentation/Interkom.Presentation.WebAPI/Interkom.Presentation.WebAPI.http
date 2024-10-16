@@ -1,0 +1,8 @@
+@Interkom.Presentation.WebAPI_HostAddress = http://localhost:5274
+
+GET {{Interkom.Presentation.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+GET {{Interkom.Presentation.WebAPI_HostAddress}}/weatherforecast/ASSDD
+Accept: application/json
