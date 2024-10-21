@@ -14,6 +14,13 @@ namespace Interkom.Presentation.WebAPI.Controllers
             _intercomService = intercomService;
         }
 
+        [HttpGet("CallAsync")]
+        public async Task<IActionResult> Call()
+        {
+            var call = _intercomService.CallAsync();
+            return Ok(call);
+        }
+
         [HttpGet("GetAllClients")]
         public async Task<IActionResult> GetAllClients()
         {

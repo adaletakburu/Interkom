@@ -4,6 +4,11 @@ namespace Interkom.Infrastructure.Persistence.Services
 {
     public class ZenitelInterkomService : IZenitelIntercomService
     {
+        public Task CallAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task ClientsAsync()
         {
             throw new NotImplementedException();

@@ -2,6 +2,7 @@
 {
     public interface IZenitelIntercomService
     {
+        Task CallAsync();
         Task ClientsAsync();
         Task StateAsync();
         Task MessagesAsync();
