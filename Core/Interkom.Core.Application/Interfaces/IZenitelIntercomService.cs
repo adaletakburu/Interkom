@@ -8,5 +8,11 @@
         Task MessagesAsync();
         Task StationStateAsync();
 
+        Task InviteAsync();
+        Task AckAsync();
+        Task CancelAsync();
+        Task OptionsAsync();
+        Task ByeAsync();
+
     }
 }

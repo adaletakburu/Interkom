@@ -14,39 +14,36 @@ namespace Interkom.Presentation.WebAPI.Controllers
             _intercomService = intercomService;
         }
 
-        [HttpGet("CallAsync")]
-        public async Task<IActionResult> Call()
+        [HttpGet("InviteAsync")]
+        public async Task<IActionResult> InviteAsync()
         {
-            var call = _intercomService.CallAsync();
+            var call = _intercomService.InviteAsync();
             return Ok(call);
         }
 
-        [HttpGet("GetAllClients")]
-        public async Task<IActionResult> GetAllClients()
+        [HttpGet("AckAsync")]
+        public async Task<IActionResult> AckAsync()
         {
-            var clients = _intercomService.ClientsAsync();
-            return Ok(clients);
+            var call = _intercomService.AckAsync();
+            return Ok(call);
         }
-
-        [HttpGet("GetAllStates")]
-        public async Task<IActionResult> GetAllStates()
+        [HttpGet("CancelAsync")]
+        public async Task<IActionResult> CancelAsync()
         {
-            var state = _intercomService.StateAsync();
-            return Ok(state);
+            var call = _intercomService.CancelAsync();
+            return Ok(call);
         }
-
-        [HttpGet("GetAllMessages")]
-        public async Task<IActionResult> GetAllMessages()
+        [HttpGet("OptionsAsync")]
+        public async Task<IActionResult> OptionsAsync()
         {
-            var messages = _intercomService.MessagesAsync();
-            return Ok(messages);
+            var call = _intercomService.OptionsAsync();
+            return Ok(call);
         }
-
-        [HttpGet("GetStationState")]
-        public async Task<IActionResult> GetStationState()
+        [HttpGet("ByeAsync")]
+        public async Task<IActionResult> ByeAsync()
         {
-            var stationState = _intercomService.StationStateAsync();
-            return Ok(stationState);
+            var call = _intercomService.ByeAsync();
+            return Ok(call);
         }
     }
 }
