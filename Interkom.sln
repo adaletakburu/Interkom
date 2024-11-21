@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interkom.Infrastructure.Inf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interkom.Infrastructure.Persistence", "Infrastructure\Interkom.Infrastructure.Persistence\Interkom.Infrastructure.Persistence.csproj", "{E1C67891-C1C8-4E8E-B747-4E191436360E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interkom.Presentation.WebAPI", "Presentation\Interkom.Presentation.WebAPI\Interkom.Presentation.WebAPI.csproj", "{5C144C61-1E07-4F45-9F2C-6846100EAD82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interkom.Presentation.WebAPI", "Presentation\Interkom.Presentation.WebAPI\Interkom.Presentation.WebAPI.csproj", "{5C144C61-1E07-4F45-9F2C-6846100EAD82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
