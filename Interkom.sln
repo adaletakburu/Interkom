@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interkom.Infrastructure.Inf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interkom.Infrastructure.Persistence", "Infrastructure\Interkom.Infrastructure.Persistence\Interkom.Infrastructure.Persistence.csproj", "{E1C67891-C1C8-4E8E-B747-4E191436360E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interkom.Presentation.WebAPI", "Presentation\Interkom.Presentation.WebAPI\Interkom.Presentation.WebAPI.csproj", "{5C144C61-1E07-4F45-9F2C-6846100EAD82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interkom.Presentation.WebAPI", "Presentation\Interkom.Presentation.WebAPI\Interkom.Presentation.WebAPI.csproj", "{5C144C61-1E07-4F45-9F2C-6846100EAD82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interkom.Presentation.MVC", "Presentation\Interkom.Presentation.MVC\Interkom.Presentation.MVC.csproj", "{6314810B-AF5C-4909-A46C-1CE270CCFA97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{5C144C61-1E07-4F45-9F2C-6846100EAD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C144C61-1E07-4F45-9F2C-6846100EAD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C144C61-1E07-4F45-9F2C-6846100EAD82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6314810B-AF5C-4909-A46C-1CE270CCFA97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6314810B-AF5C-4909-A46C-1CE270CCFA97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6314810B-AF5C-4909-A46C-1CE270CCFA97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6314810B-AF5C-4909-A46C-1CE270CCFA97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{47BA8FB7-9BA5-4B91-9D7B-D6BA2758B630} = {279A2391-B557-43A1-B086-18658D11EB3C}
 		{E1C67891-C1C8-4E8E-B747-4E191436360E} = {279A2391-B557-43A1-B086-18658D11EB3C}
 		{5C144C61-1E07-4F45-9F2C-6846100EAD82} = {59141E9B-CBBB-4C0B-BC32-1BB0B2B7D571}
+		{6314810B-AF5C-4909-A46C-1CE270CCFA97} = {59141E9B-CBBB-4C0B-BC32-1BB0B2B7D571}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C636CE0F-4C46-4C58-9B14-80371803CEEE}

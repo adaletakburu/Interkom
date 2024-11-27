@@ -1,4 +1,4 @@
-using Interkom.Infrastructure.Persistence.Extensions;
+using Interkom.Infrastructure.Infrastructure.Extensions;
 
 namespace Interkom.Presentation.WebAPI
 {
@@ -15,7 +15,7 @@ namespace Interkom.Presentation.WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddPersistenceRegistration();
+            builder.Services.AddInfrastructureRegistration();
 
             var app = builder.Build();
 

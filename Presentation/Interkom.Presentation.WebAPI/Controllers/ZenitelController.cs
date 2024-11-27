@@ -14,35 +14,10 @@ namespace Interkom.Presentation.WebAPI.Controllers
             _intercomService = intercomService;
         }
 
-        [HttpGet("InviteAsync")]
-        public async Task<IActionResult> InviteAsync()
+        [HttpGet("GetFullStationList")]
+        public async Task<IActionResult> GetFullStationList()
         {
-            var call = _intercomService.InviteAsync();
-            return Ok(call);
-        }
-
-        [HttpGet("AckAsync")]
-        public async Task<IActionResult> AckAsync()
-        {
-            var call = _intercomService.AckAsync();
-            return Ok(call);
-        }
-        [HttpGet("CancelAsync")]
-        public async Task<IActionResult> CancelAsync()
-        {
-            var call = _intercomService.CancelAsync();
-            return Ok(call);
-        }
-        [HttpGet("OptionsAsync")]
-        public async Task<IActionResult> OptionsAsync()
-        {
-            var call = _intercomService.OptionsAsync();
-            return Ok(call);
-        }
-        [HttpGet("ByeAsync")]
-        public async Task<IActionResult> ByeAsync()
-        {
-            var call = _intercomService.ByeAsync();
+            var call = _intercomService.GetFullStationList();
             return Ok(call);
         }
     }

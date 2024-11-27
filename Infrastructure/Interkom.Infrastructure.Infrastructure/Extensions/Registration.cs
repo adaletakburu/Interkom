@@ -1,12 +1,12 @@
 ﻿using Interkom.Core.Application.Interfaces;
-using Interkom.Infrastructure.Persistence.Services;
+using Interkom.Infrastructure.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Interkom.Infrastructure.Persistence.Extensions
+namespace Interkom.Infrastructure.Infrastructure.Extensions
 {
     public static class Registration
     {
-        public static IServiceCollection AddPersistenceRegistration(this IServiceCollection services) 
+        public static IServiceCollection AddInfrastructureRegistration(this IServiceCollection services) 
         {
             services.AddScoped<IZenitelIntercomService, ZenitelInterkomService>();
 
