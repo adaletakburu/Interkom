@@ -1,28 +1,20 @@
 ﻿using Interkom.Core.Application.Interfaces;
-using NAudio.Wave;
 using Stentofon.AlphaCom.AlphaNet.Client;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Text.RegularExpressions;
 
-namespace Interkom.Infrastructure.Persistence.Services
+namespace Interkom.Infrastructure.Infrastructure.Services
 {
     public class ZenitelInterkomService : IZenitelIntercomService
     {
-        private AlphaNetClient _client;
-        public ZenitelInterkomService()
+        private AlphaNetClient _client = new AlphaNetClient("10.0.1.15")
         {
-            _client = new AlphaNetClient("10.0.1.15")
-            {
-                DoSynchronizeStates = true,
-            };
-            _client.Connect();
-        }
+            DoSynchronizeStates = true,
+        };
+
 
         public List<string> GetFullStationList()
         {
 
+            _client.Connect();
             while (!_client.IsConnected)
             {
                 Console.WriteLine("bağlı değil");
@@ -37,10 +29,12 @@ namespace Interkom.Infrastructure.Persistence.Services
             {
                 if (item.IsIPStationOK())
                 {
-                    list.Add(item.DisplayText);
+                    Console.WriteLine(item.DirectoryNumber.ToString());
+                    list.Add(item.MessageText);
                 }
             }
-
+            //_client.SendAlphaCommand("$CALL L102 L101");
+            var x = _client.GetNodeStationStates(1);
             return list;
 
         }
