@@ -2,23 +2,6 @@
     ViewData["Title"] = "Home Page";
 }
 
-<style>
-    /* Butonların stili için örnek */
-    .station-button {
-        margin: 5px;
-        padding: 10px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-        .station-button:hover {
-            background-color: #0056b3;
-        }
-</style>
-
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
@@ -29,36 +12,69 @@
 <script>
     const connection = new signalR.HubConnectionBuilder().withUrl("/zenitelHub").build();
 
-    connection.start().then(() => {
-        console.log("zenitelHub bağlanıldı.");
-    }).catch(err => console.error("SignalR bağlantı hatası:", err));
+    connection.start()
+        .then(() => {
+            console.log("zenitelHub bağlanıldı.");
+        })
+        .catch(err => console.error("SignalR bağlantı hatası:", err));
 
-
-    // Peer listesi güncellendiğinde listede göster
     connection.on("GetFullIPStationOKList", (stationList) => {
-
         const container = document.getElementById("stationButtons");
         container.innerHTML = ""; // Eski butonları temizle
 
         stationList.forEach((station) => {
             const button = document.createElement("button");
             button.innerText = station.displayText; // Görünen metin
-            button.className = "station-button"; // İstersen CSS için bir sınıf ekle
+            button.className = "station-button"; // CSS için sınıf ekle
+            button.value = station.directoryNumber.digitString;
             button.addEventListener("click", () => {
-                // Butona tıklandığında bir işlem yap
-                console.log(`${station.displayText} butonuna tıklandı!`);
+
+                connection.invoke("Call", station.directoryNumber.digitString)
+                    .catch(err => console.error("Call hatası:", err));
             });
 
             container.appendChild(button);
         });
-        /*
-        stationList.forEach((station) => {
-            //station.directoryNumber.digitString
-            //station.physicalNumber
-            //station.displayText
-            console.log(station.displayText);
-        });*/
-
     });
 
+
+
+    connection.on("HandleOnCallStatus", (callStatus) => {
+        const digitA = callStatus.stationA.digitString;
+        const digitB = callStatus.stationB.digitString;
+
+        // Tüm butonları al
+        const buttons = document.querySelectorAll(".station-button");
+
+        // StationA ve StationB'nin eşleşen butonlarına yanıp sönme ekle
+        buttons.forEach(button => {
+            if (button.value === digitA || button.value === digitB) {
+                button.classList.add("blinking");
+            }
+        });
+    });
+
+
+    connection.on("StopBlink", (callStatus) => {
+        var digitA = callStatus;
+
+        // Tüm butonları al
+        const buttons = document.querySelectorAll(".station-button");
+
+        // StationA ve StationB'nin eşleşen butonlarına yanıp sönme ekle
+        buttons.forEach(button => {
+
+            if (button.value === digitA) {
+                button.classList.remove("blinking");
+            }
+        });
+    });
+
+    /*
+stationList.forEach((station) => {
+    //station.directoryNumber.digitString
+    //station.physicalNumber
+    //station.displayText
+    console.log(station.displayText);
+});*/
 </script>

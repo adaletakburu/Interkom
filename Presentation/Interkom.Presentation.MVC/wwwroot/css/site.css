@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -19,4 +19,27 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+.station-button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Yanıp sönen buton için animasyon */
+@keyframes blink {
+    0%, 100% {
+        background-color: transparent;
+    }
+
+    50% {
+        background-color: green;
+    }
+}
+
+.station-button.blinking {
+    animation: blink 1s infinite;
 }

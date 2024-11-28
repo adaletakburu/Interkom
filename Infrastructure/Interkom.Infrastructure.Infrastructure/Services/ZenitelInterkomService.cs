@@ -10,6 +10,10 @@ namespace Interkom.Infrastructure.Infrastructure.Services
             DoSynchronizeStates = true,
         };
 
+        public ZenitelInterkomService(AlphaNetClient client)
+        {
+            _client = client;
+        }
 
         public List<string> GetFullStationList()
         {
@@ -23,18 +27,9 @@ namespace Interkom.Infrastructure.Infrastructure.Services
             Console.WriteLine("bağlandı");
 
             Task.Delay(10000).Wait();
-            List<string> list = new();
-
-            foreach (var item in _client.Stations.GetFullStationList())
-            {
-                if (item.IsIPStationOK())
-                {
-                    Console.WriteLine(item.DirectoryNumber.ToString());
-                    list.Add(item.MessageText);
-                }
-            }
-            //_client.SendAlphaCommand("$CALL L102 L101");
-            var x = _client.GetNodeStationStates(1);
+           List<string> list = new();
+            _client.SendAlphaCommand("$CALL L102 L105");
+            //var x = _client.GetNodeStationStates(1);
             return list;
 
         }

@@ -1,3 +1,4 @@
+using Interkom.Infrastructure.Infrastructure.Extensions;
 using Interkom.Infrastructure.Infrastructure.Hubs;
 
 namespace Interkom.Presentation.MVC
@@ -10,7 +11,9 @@ namespace Interkom.Presentation.MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddInfrastructureRegistration();
             builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
