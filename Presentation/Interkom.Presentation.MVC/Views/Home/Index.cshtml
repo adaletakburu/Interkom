@@ -1,64 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<style>
-    /* Butonların stili için örnek */
-    .station-button {
-        margin: 5px;
-        padding: 10px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-        .station-button:hover {
-            background-color: #0056b3;
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intercom Management Interface</title>
+    <style>
+        .station-button, .announcement-button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-</style>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+            .station-button:hover, .announcement-button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="text-center">
+        <h1 class="display-4">Intercom Call Interface</h1>
+        <p>Select an intercom to initiate a call or play announcements.</p>
+    </div>
 
-<div id="stationButtons"></div>
+    <div id="stationButtons"></div>
 
-<script>
-    const connection = new signalR.HubConnectionBuilder().withUrl("/zenitelHub").build();
+    <div class="text-center">
+        <button id="playAnnouncement" class="announcement-button">Play 1st Announcement</button>
+    </div>
 
-    connection.start().then(() => {
-        console.log("zenitelHub bağlanıldı.");
-    }).catch(err => console.error("SignalR bağlantı hatası:", err));
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder().withUrl("/zenitelHub").build();
 
+        connection.start().then(() => {
+            console.log("Connected to zenitelHub.");
+        }).catch(err => console.error("SignalR connection error:", err));
 
-    // Peer listesi güncellendiğinde listede göster
-    connection.on("GetFullIPStationOKList", (stationList) => {
+        // Update the button list when station list is received
+        connection.on("GetFullIPStationOKList", (stationList) => {
+            const container = document.getElementById("stationButtons");
+            container.innerHTML = ""; // Clear previous buttons
 
-        const container = document.getElementById("stationButtons");
-        container.innerHTML = ""; // Eski butonları temizle
+            stationList.forEach((station) => {
+                const button = document.createElement("button");
+                button.innerText = station.displayText; // Display text
+                button.className = "station-button";
 
-        stationList.forEach((station) => {
-            const button = document.createElement("button");
-            button.innerText = station.displayText; // Görünen metin
-            button.className = "station-button"; // İstersen CSS için bir sınıf ekle
-            button.addEventListener("click", () => {
-                // Butona tıklandığında bir işlem yap
-                console.log(`${station.displayText} butonuna tıklandı!`);
+                // Add click event to start a call
+                button.addEventListener("click", () => {
+                    const targetStation = `L${station.directoryNumber.digitString}`; // Add "L" prefix
+                    connection.invoke("StartCall", "L101", targetStation)
+                        .then(() => console.log(`Call initiated from L101 to ${targetStation}`))
+                        .catch(err => console.error("Error initiating call:", err));
+                });
+
+                container.appendChild(button);
             });
-
-            container.appendChild(button);
         });
-        /*
-        stationList.forEach((station) => {
-            //station.directoryNumber.digitString
-            //station.physicalNumber
-            //station.displayText
-            console.log(station.displayText);
-        });*/
 
-    });
-
-</script>
+        // Play the 1st Announcement
+        document.getElementById("playAnnouncement").addEventListener("click", () => {
+            connection.invoke("PlayAnnouncement", "L101", "U1")
+                .then(() => console.log("1st Announcement played via L101."))
+                .catch(err => console.error("Error playing announcement:", err));
+        });
+    </script>
+</body>
+</html>
