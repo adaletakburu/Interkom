@@ -28,8 +28,8 @@ namespace Interkom.Infrastructure.Infrastructure.Hubs
             //_client.OnBusyCallStatus += HandleOnBusyCallStatus;// ARAMA YAPTIĞI KİŞİ BAŞKASIYA GÖRÜŞÜYORSA (MEŞGULSE)
             //_client.OnCallRequestsSynchronized += HandleOnCallRequestsSynchronized;
 
+           
             await base.OnConnectedAsync();
-
         }
 
 
@@ -64,7 +64,7 @@ namespace Interkom.Infrastructure.Infrastructure.Hubs
         private async void HandleOnStationState(StationState st, StationUpdateReason reason)
         {
             if (StationUpdateReason.StateNotify == reason)
-                await hubContext.Clients.All.SendAsync("GetFullIPStationOKList", _client.Stations.GetFullStationList().Where(item => item.IsIPStationOK()));
+                await hubContext.Clients.All.SendAsync("GetFullIPStationOKList", _client.Stations.GetFullStationList());
 
             if (st.RelatedStation?.DigitString == null && StationUpdateReason.ConnectBC == reason)
                 await hubContext.Clients.All.SendAsync("StopBlink", st.DirectoryNumber.DigitString);
@@ -73,14 +73,21 @@ namespace Interkom.Infrastructure.Infrastructure.Hubs
 
         public async Task Call(string digitNumber)
         {
-            string command = "$CALL L101 L" + digitNumber;
+            string command = "$CALL L5211 L" + digitNumber;
             _client.SendAlphaCommand(command);
             Task.Delay(10000).Wait();
-            _client.SendAlphaCommand("$CAC");
         }
 
+        public async Task MakeAnnounce()
+        {
+            string command = "$DIAL_DAK L5211 U3";
+            _client.SendAlphaCommand(command);
+        }
 
-
+        public async Task EndCall()
+        {
+            _client.SendAlphaCommand("$C L5211");
+        }
         public override Task OnDisconnectedAsync(Exception exception)//BAĞLANTI SONLANDIĞINDA
         {
             return base.OnDisconnectedAsync(exception);

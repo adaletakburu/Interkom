@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <Reference Include="Stentofon.AlphaCom.AlphaNet">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Vingtor Stentofon\VS-SDK for AlphaCom\Stentofon.AlphaCom.AlphaNet.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Vingtor Stentofon\VS-SDK for AlphaCom\Stentofon.AlphaCom.AlphaNet.dll</HintPath>
     </Reference>
   </ItemGroup>
 
