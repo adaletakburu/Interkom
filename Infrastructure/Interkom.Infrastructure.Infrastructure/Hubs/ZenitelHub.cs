@@ -19,7 +19,13 @@ namespace Interkom.Infrastructure.Infrastructure.Hubs
         public override async Task OnConnectedAsync()//BAĞLANTI SAĞLANDIĞINDA
         {
 
-            await hubContext.Clients.All.SendAsync("GetFullIPStationOKList", _client.Stations.GetFullStationList().Where(item => item.IsIPStationOK()));
+            var stationDictionary = _client.Stations.GetFullStationList()
+                .Where(item => item.IsIPStationOK())
+                .GroupBy(item => item.DirectoryNumber.Node)
+                .ToDictionary(group => group.Key, group => group.ToList());
+
+            await hubContext.Clients.All.SendAsync("GetFullIPStationOKList", stationDictionary);
+
             _client.OnStationState += HandleOnStationState;
             _client.OnCallStatus += HandleOnCallStatus;//ARAMA İŞLEMİ OLDUĞUNDAKİ KİM KİMİ ARIYOR BİLGİSİ
 
@@ -64,18 +70,25 @@ namespace Interkom.Infrastructure.Infrastructure.Hubs
         private async void HandleOnStationState(StationState st, StationUpdateReason reason)
         {
             if (StationUpdateReason.StateNotify == reason)
-                await hubContext.Clients.All.SendAsync("GetFullIPStationOKList", _client.Stations.GetFullStationList());
+
+            {
+                var stationDictionary = _client.Stations.GetFullStationList()
+                .Where(item => item.IsIPStationOK())
+                .GroupBy(item => item.DirectoryNumber.Node)
+                .ToDictionary(group => group.Key, group => group.ToList());
+
+                await hubContext.Clients.All.SendAsync("GetFullIPStationOKList", stationDictionary);
+            }
+
 
             if (st.RelatedStation?.DigitString == null && StationUpdateReason.ConnectBC == reason)
                 await hubContext.Clients.All.SendAsync("StopBlink", st.DirectoryNumber.DigitString);
         }
 
-
-        public async Task Call(string digitNumber)
+        public void StartCall(string digitNumber)
         {
             string command = "$CALL L5211 L" + digitNumber;
             _client.SendAlphaCommand(command);
-            Task.Delay(10000).Wait();
         }
 
         public async Task MakeAnnounce()
@@ -88,6 +101,8 @@ namespace Interkom.Infrastructure.Infrastructure.Hubs
         {
             _client.SendAlphaCommand("$C L5211");
         }
+
+
         public override Task OnDisconnectedAsync(Exception exception)//BAĞLANTI SONLANDIĞINDA
         {
             return base.OnDisconnectedAsync(exception);
