@@ -9,6 +9,11 @@
 
 <div id="stationButtons"></div>
 
+<div id="endButton">
+    <button type="button" class="btn btn-danger endCall">ÇAĞRI SONLANDIR</button>
+
+</div>
+
 <script>
     const connection = new signalR.HubConnectionBuilder().withUrl("/zenitelHub").build();
 
@@ -18,27 +23,75 @@
         })
         .catch(err => console.error("SignalR bağlantı hatası:", err));
 
-    connection.on("GetFullIPStationOKList", (stationList) => {
+    connection.on("GetFullIPStationOKList", (stationDictionary) => {
         const container = document.getElementById("stationButtons");
         container.innerHTML = ""; // Eski butonları temizle
 
-        stationList.forEach((station) => {
-            const button = document.createElement("button");
-            button.innerText = station.displayText; // Görünen metin
-            button.className = "station-button"; // CSS için sınıf ekle
-            button.value = station.directoryNumber.digitString;
-            button.addEventListener("click", () => {
+        // Sözlükteki her grup için işlem yap
+        for (const [nodeKey, stationList] of Object.entries(stationDictionary)) {
+            // Grup başlığı (nodeKey) için bir başlık oluştur
+            const groupTitle = document.createElement("h3");
+            groupTitle.innerText = `Grup: ${nodeKey}`;
+            container.appendChild(groupTitle);
 
-                connection.invoke("Call", station.directoryNumber.digitString)
-                    .catch(err => console.error("Call hatası:", err));
+            // İlgili gruptaki istasyonlar için butonlar oluştur
+            stationList.forEach((station) => {
+                const button = document.createElement("button");
+                button.innerText = station.displayText; // Görünen metin
+                button.className = "station-button"; // CSS için sınıf ekle
+                button.value = station.directoryNumber.digitString;
+                button.addEventListener("click", () => {
+                    connection.invoke("StartCall", station.directoryNumber.digitString)
+                        .catch(err => console.error("Call hatası:", err));
+                });
+
+                container.appendChild(button);
             });
-
-            container.appendChild(button);
-        });
+        }
     });
 
+    /*
 
+    connection.on("GetFullIPStationOKList", (stationList) => {
+        // Ana container'ı seç veya oluştur
+        const container = document.getElementById("stationContainer") || createContainer();
 
+        // Gelen verileri işleme
+        for (const [key, stations] of Object.entries(stationList)) {
+            // Her grup için bir groupbox (fieldset) oluştur
+            const groupBox = document.createElement("fieldset");
+            groupBox.classList.add("group-box");
+            const legend = document.createElement("legend");
+            legend.textContent = `Node: ${key}`;
+            groupBox.appendChild(legend);
+
+            // Station verilerini buton olarak ekle
+            stations.forEach(station => {
+                const button = document.createElement("button");
+                button.classList.add("station-button");
+                button.textContent = `Station ID: ${station.directoryNumber.digitString}`;
+
+                // İsteğe bağlı olarak bir click event ekleyin
+                button.addEventListener("click", () => {
+                    alert(`Station ID: ${station.directoryNumber.digitString}`);
+                });
+
+                groupBox.appendChild(button);
+            });
+
+            // Groupbox'ı container'a ekle
+            container.appendChild(groupBox);
+        }
+    });
+
+    // Container oluşturma fonksiyonu
+    function createContainer() {
+        const container = document.createElement("div");
+        container.id = "stationContainer";
+        container.classList.add("station-container");
+        document.body.appendChild(container);
+
+        */
     connection.on("HandleOnCallStatus", (callStatus) => {
         const digitA = callStatus.stationA.digitString;
         const digitB = callStatus.stationB.digitString;
@@ -68,6 +121,10 @@
                 button.classList.remove("blinking");
             }
         });
+    });
+    $(".endCall").click(function () {
+        connection.invoke("EndCall")
+            .catch(err => console.error("Call hatası:", err));
     });
 
     /*

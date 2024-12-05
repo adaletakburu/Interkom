@@ -13,7 +13,7 @@ namespace Interkom.Infrastructure.Infrastructure.Extensions
 
             services.AddSingleton<AlphaNetClient>(provider =>
             {
-                var client = new AlphaNetClient("10.0.1.15");
+                var client = new AlphaNetClient("10.0.1.20");
                 client.Connect();
 
                 // Bağlantı kurulana kadar bekleme (async uygun değil, dikkat!)
