@@ -26,6 +26,22 @@
             flex-wrap: wrap;
             justify-content: center;
         }
+
+
+        .group-container {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .group-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+       
     </style>
 </head>
 <body>
@@ -81,26 +97,42 @@
             })
             .catch(err => console.error("SignalR bağlantı hatası:", err));
 
-        connection.on("GetFullIPStationOKList", (stationList) => {
+        connection.on("GetFullIPStationOKList", (stationDictionary) => {
             const container = document.getElementById("stationButtons");
             container.innerHTML = ""; // Eski butonları temizle
 
-            // digitString değeri "101" olanları filtrele
-            const filteredStationList = stationList.filter(station => station.directoryNumber.digitString !== "101");
+            // Sözlükteki her grup için işlem yap
+            for (const [nodeKey, stationList] of Object.entries(stationDictionary)) {
+                // Grup başlığı (nodeKey) için bir başlık kartı oluştur
+                const groupContainer = document.createElement("div");
+                groupContainer.className = "group-container mb-4"; // Gruplar arasında boşluk bırak
 
-            // Filtrelenmiş listeyi işle
-            filteredStationList.forEach((station) => {
-                const button = document.createElement("button");
-                button.innerText = station.displayText; // Görünen metin
-                button.className = "btn btn-outline-primary station-button"; // Bootstrap ile şık görünüm
-                button.value = station.directoryNumber.digitString;
-                button.addEventListener("click", () => {
-                    connection.invoke("Call", station.directoryNumber.digitString)
-                        .catch(err => console.error("Call hatası:", err));
+                const groupTitle = document.createElement("div");
+                groupTitle.className = "group-title p-2 text-white bg-dark rounded"; // Bootstrap sınıflarıyla şık görünüm
+                groupTitle.innerText = `Grup: ${nodeKey}`;
+                groupContainer.appendChild(groupTitle);
+
+                // İlgili gruptaki istasyonlar için butonlar oluştur
+                const stationButtonContainer = document.createElement("div");
+                stationButtonContainer.className = "d-flex flex-wrap justify-content-center mt-2"; // Butonların düzenlenmesi
+
+                stationList.forEach((station) => {
+                    const button = document.createElement("button");
+                    button.innerText = station.displayText; // Görünen metin
+                    button.className = "btn btn-outline-primary station-button"; // Bootstrap ile şık görünüm
+                    button.value = station.directoryNumber.digitString;
+                    button.addEventListener("click", () => {
+                        connection.invoke("StartCall", station.directoryNumber.digitString)
+                            .catch(err => console.error("Call hatası:", err));
+                    });
+
+                    stationButtonContainer.appendChild(button);
                 });
 
-                container.appendChild(button);
-            });
+                // Grup başlığını ve butonları kapsayıcıya ekle
+                groupContainer.appendChild(stationButtonContainer);
+                container.appendChild(groupContainer);
+            }
         });
 
         connection.on("HandleOnCallStatus", (callStatus) => {
@@ -177,8 +209,6 @@
                     })
                     .catch(err => console.error("EndCall hatası:", err));
             });
-
-
         });
     </script>
 </body>

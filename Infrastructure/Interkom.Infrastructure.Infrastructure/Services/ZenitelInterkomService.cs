@@ -62,7 +62,7 @@ namespace Interkom.Infrastructure.Infrastructure.Services
                 using (Process process = new Process { StartInfo = processStartInfo })
                 {
                     process.Start();
-                    _client.SendAlphaCommand("$")
+                    _client.SendAlphaCommand("$DIAL_DAK L5210 U4");
                     // Hata çıktısını ve standart çıktıyı al
                     string output = process.StandardOutput.ReadToEnd();
                     string error = process.StandardError.ReadToEnd();
