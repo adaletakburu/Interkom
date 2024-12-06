@@ -62,24 +62,39 @@ namespace Interkom.Infrastructure.Infrastructure.Services
 
                 using (Process process = new Process { StartInfo = processStartInfo })
                 {
+                    process.OutputDataReceived += (sender, e) =>
+                    {
+                        if (!string.IsNullOrEmpty(e.Data))
+                        {
+                            Console.WriteLine($"Output: {e.Data}");
+                        }
+                    };
+
+                    process.ErrorDataReceived += (sender, e) =>
+                    {
+                        if (string.IsNullOrEmpty(e.Data))
+                        {
+                            Console.WriteLine($"Info: {e.Data}");
+                        }
+                    };
+
                     process.Start();
                     _client.SendAlphaCommand("$CONF L86 L8202");
-                    // Hata çıktısını ve standart çıktıyı al
-                    string output = process.StandardOutput.ReadToEnd();
-                    string error = process.StandardError.ReadToEnd();
+
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+
                     process.WaitForExit();
                     _client.SendAlphaCommand("$CONF L86 L8200");
 
                     if (process.ExitCode == 0)
                     {
                         Console.WriteLine("ffmpeg komutu başarıyla çalıştı:");
-                        Console.WriteLine(output);
                         return true;
                     }
                     else
                     {
                         Console.WriteLine("ffmpeg komutu hata ile sonlandı:");
-                        Console.WriteLine(error);
                         return false;
                     }
                 }
