@@ -1,5 +1,6 @@
 ﻿using Interkom.Core.Application.Interfaces;
 using Stentofon.AlphaCom.AlphaNet.Client;
+using System;
 using System.Diagnostics;
 
 namespace Interkom.Infrastructure.Infrastructure.Services
@@ -62,12 +63,12 @@ namespace Interkom.Infrastructure.Infrastructure.Services
                 using (Process process = new Process { StartInfo = processStartInfo })
                 {
                     process.Start();
-                    _client.SendAlphaCommand("$DIAL_DAK L5210 U4");
+                    _client.SendAlphaCommand("$CONF L86 L8202");
                     // Hata çıktısını ve standart çıktıyı al
                     string output = process.StandardOutput.ReadToEnd();
                     string error = process.StandardError.ReadToEnd();
-
                     process.WaitForExit();
+                    _client.SendAlphaCommand("$CONF L86 L8200");
 
                     if (process.ExitCode == 0)
                     {

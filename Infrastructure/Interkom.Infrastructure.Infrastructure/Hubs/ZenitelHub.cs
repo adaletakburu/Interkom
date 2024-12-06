@@ -27,14 +27,14 @@ namespace Interkom.Infrastructure.Infrastructure.Hubs
             await hubContext.Clients.All.SendAsync("GetFullIPStationOKList", stationDictionary);
 
             _client.OnStationState += HandleOnStationState;
-            //_client.OnCallStatus += HandleOnCallStatus;//ARAMA İŞLEMİ OLDUĞUNDAKİ KİM KİMİ ARIYOR BİLGİSİ
+            _client.OnCallStatus += HandleOnCallStatus;//ARAMA İŞLEMİ OLDUĞUNDAKİ KİM KİMİ ARIYOR BİLGİSİ
 
             //_client.OnOpenCallStatus += HandleOnOpenCallStatus;
             //_client.OnPrivateCallStatus += HandleOnPrivateCallStatus;
             //_client.OnBusyCallStatus += HandleOnBusyCallStatus;// ARAMA YAPTIĞI KİŞİ BAŞKASIYA GÖRÜŞÜYORSA (MEŞGULSE)
             //_client.OnCallRequestsSynchronized += HandleOnCallRequestsSynchronized;
 
-           
+
             await base.OnConnectedAsync();
         }
 
