@@ -13,7 +13,7 @@ namespace Interkom.Presentation.MVC
             builder.Services.AddControllersWithViews();
             builder.Services.AddInfrastructureRegistration();
             builder.Services.AddSignalR();
-
+            builder.Services.AddHttpClient();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

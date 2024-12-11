@@ -34,7 +34,7 @@ namespace Interkom.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public bool FfmpegTest() 
+        public bool FfmpegTest()
         {
             string filePath = @"C:\ffmpeg\media\anons2.mp3";
             string rtpAddress = "rtp://10.0.1.20:4004";
@@ -95,7 +95,38 @@ namespace Interkom.Presentation.MVC.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UploadAudioToServer(
+       [FromForm] string ip,
+       [FromForm] string username,
+       [FromForm] string password,
+       [FromForm] IFormFile audioFile,
+       [FromForm] string group,
+       [FromForm] int index)
+        {
+            if (audioFile == null || audioFile.Length == 0)
+                return BadRequest("Ses dosyası boş.");
 
+            var tempFilePath = Path.GetTempFileName();
+            try
+            {
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    await audioFile.CopyToAsync(stream);
+                }
+
+                var result = await _service.UploadAudioFileAsync(ip, username, password, tempFilePath, group, index);
+                if (result)
+                    return Ok("Ses dosyası başarıyla yüklendi.");
+                else
+                    return StatusCode(500, "Ses dosyası yüklenirken bir hata oluştu.");
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tempFilePath))
+                    System.IO.File.Delete(tempFilePath);
+            }
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

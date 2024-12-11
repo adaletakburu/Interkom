@@ -2,6 +2,10 @@
 using Stentofon.AlphaCom.AlphaNet.Client;
 using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Text;
+using Microsoft.Extensions.Logging;
+using System.Net.Http.Headers;
 
 namespace Interkom.Infrastructure.Infrastructure.Services
 {
@@ -11,10 +15,13 @@ namespace Interkom.Infrastructure.Infrastructure.Services
         {
             DoSynchronizeStates = true,
         };
-
-        public ZenitelInterkomService(AlphaNetClient client)
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<ZenitelInterkomService> _logger;
+        public ZenitelInterkomService(AlphaNetClient client, HttpClient httpClient, ILogger<ZenitelInterkomService> logger)
         {
             _client = client;
+            _httpClient = httpClient;
+            _logger = logger;
         }
 
         public List<string> GetFullStationList()
@@ -105,6 +112,68 @@ namespace Interkom.Infrastructure.Infrastructure.Services
                 return false;
             }
         }
+
+        public async Task<bool> UploadAudioFileAsync(string ip, string username, string password, string filePath, string group, int index)
+        {
+            try
+            {
+                // 1. CSRF token ve PHPSESSID'yi almak için GET isteği gönder.
+                var csrfRequest = new HttpRequestMessage(HttpMethod.Get, $"http://{ip}/php/amc_wav_upload.php");
+                var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                csrfRequest.Headers.Add("Authorization", $"Basic {credentials}");
+
+                var csrfResponse = await _httpClient.SendAsync(csrfRequest);
+                csrfResponse.EnsureSuccessStatusCode();
+
+                var csrfContent = await csrfResponse.Content.ReadAsStringAsync();
+                var csrfToken = Regex.Match(csrfContent, "<input[^>]*name=\"csrf_token\"[^>]*value=\"(?<token>[^\"]+)\"", RegexOptions.IgnoreCase).Groups["token"].Value;
+
+                var sessionCookie = csrfResponse.Headers.GetValues("Set-Cookie")
+                    .FirstOrDefault(c => c.StartsWith("PHPSESSID="))?
+                    .Split(';')?[0]?.Replace("PHPSESSID=", "");
+
+                if (string.IsNullOrEmpty(csrfToken) || string.IsNullOrEmpty(sessionCookie))
+                {
+                    Console.WriteLine("CSRF token veya PHPSESSID alınamadı.");
+                    return false;
+                }
+
+                // 2. Ses dosyasını POST isteği ile yükle.
+                using var formData = new MultipartFormDataContent();
+
+                // userfile parametresi için dosya içeriği ekleniyor.
+                using var fileStream = File.OpenRead(filePath);
+                var fileContent = new StreamContent(fileStream);
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue("audio/wav");
+                formData.Add(fileContent, "userfile", Path.GetFileName(filePath));
+
+                // Diğer parametreler
+                formData.Add(new StringContent(csrfToken), "csrf_token");
+                formData.Add(new StringContent("1"), "msg_type_action");
+                formData.Add(new StringContent(index.ToString()), "msg_ind");
+                formData.Add(new StringContent(group), "msg_type");
+
+                var postRequest = new HttpRequestMessage(HttpMethod.Post, $"http://{ip}/php/amc_wav_upload.php")
+                {
+                    Content = formData
+                };
+
+                postRequest.Headers.Add("Authorization", $"Basic {credentials}");
+                postRequest.Headers.Add("Cookie", $"PHPSESSID={sessionCookie}");
+
+                var postResponse = await _httpClient.SendAsync(postRequest);
+                postResponse.EnsureSuccessStatusCode();
+
+                Console.WriteLine("Ses dosyası başarıyla yüklendi.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Hata: {ex.Message}");
+                return false;
+            }
+        }
+
 
     }
 }

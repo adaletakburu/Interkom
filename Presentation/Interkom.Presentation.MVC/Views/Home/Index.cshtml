@@ -118,9 +118,8 @@
             border: 2px solid #000;
             border-radius: 50%;
         }
+        </style>
 
-
-    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -234,7 +233,39 @@
             </div>
         </div>
     </div>
-        
+    <div class="container mt-4">
+        <h2>Ses Dosyası Yükleme</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="ip" class="form-label">IP Adresi</label>
+                <input type="text" class="form-control" id="ip" name="ip" required placeholder="Örn: 10.6.211.133">
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Kullanıcı Adı</label>
+                <input type="text" class="form-control" id="username" name="username" required placeholder="Örn: admin">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Şifre</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3">
+                <label for="audioFile" class="form-label">Ses Dosyası</label>
+                <input type="file" class="form-control" id="audioFile" name="audioFile" accept=".wav" required>
+            </div>
+            <div class="mb-3">
+                <label for="group" class="form-label">Grup</label>
+                <input type="text" class="form-control" id="group" name="group" required placeholder="Örn: (20)Info message">
+            </div>
+            <div class="mb-3">
+                <label for="index" class="form-label">Index</label>
+                <input type="number" class="form-control" id="index" name="index" required placeholder="Örn: 1">
+            </div>
+            <button type="submit" class="btn btn-primary">Yükle</button>
+        </form>
+
+        <div id="uploadResult" class="mt-3"></div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signalr/5.0.14/signalr.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -312,6 +343,29 @@
 
         // Anons Sistemi fonksiyonları
         $(document).ready(function () {
+
+            document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+
+                try {
+                    const response = await fetch('/Home/UploadAudioToServer', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.text();
+                    const resultDiv = document.getElementById("uploadResult");
+                    if (response.ok) {
+                        resultDiv.innerHTML = `<div class="alert alert-success">${result}</div>`;
+                    } else {
+                        resultDiv.innerHTML = `<div class="alert alert-danger">${result}</div>`;
+                    }
+                } catch (error) {
+                    document.getElementById("uploadResult").innerHTML = `<div class="alert alert-danger">Hata: ${error.message}</div>`;
+                }
+            });
+
             $(".btnMakeAnnounceBtn").click(function () {
                 const anonsDegeri = $(this).val(); // Tıklanan butonun value değerini al
                 console.log(`Anons değeri alındı: ${anonsDegeri}`);
